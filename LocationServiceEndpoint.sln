@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.852
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LocationServiceEndpoint", "LocationServiceEndpoint\LocationServiceEndpoint.csproj", "{AD147B71-4B4E-4393-A451-5B17A0096DAE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AD147B71-4B4E-4393-A451-5B17A0096DAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD147B71-4B4E-4393-A451-5B17A0096DAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD147B71-4B4E-4393-A451-5B17A0096DAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD147B71-4B4E-4393-A451-5B17A0096DAE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {83F58E36-4B27-42D1-A23A-EB995CEFAB3A}
+	EndGlobalSection
+EndGlobal
