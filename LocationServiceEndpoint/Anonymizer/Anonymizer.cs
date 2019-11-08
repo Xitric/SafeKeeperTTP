@@ -67,7 +67,14 @@ namespace LocationServiceEndpoint.Anonymizer
 
         private static BoundingBox Mbr(IEnumerable<OriginalLocation> messages)
         {
-            var result = new BoundingBox();
+            var first = messages.First();
+            var result = new BoundingBox
+            {
+                MinX = first.Lat,
+                MaxX = first.Lat,
+                MinY = first.Lon,
+                MaxY = first.Lon
+            };
 
             foreach (var ms in messages)
             {
