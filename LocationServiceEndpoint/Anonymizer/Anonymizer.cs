@@ -6,26 +6,14 @@ namespace LocationServiceEndpoint.Anonymizer
 {
     public class Anonymizer
     {
-        private MultidimensionalIndex _im = new MultidimensionalIndex();
-        private ExpirationHeap _hm = new ExpirationHeap();
-        private ConstraintGraph _gm = new ConstraintGraph();
+        private readonly MultidimensionalIndex _im = new MultidimensionalIndex();
+        private readonly ExpirationHeap _hm = new ExpirationHeap();
+        private readonly ConstraintGraph _gm = new ConstraintGraph();
 
         public AnonymizedLocation Anonymize(OriginalLocation msc)
         {
-            _im.Add(msc);
-            _hm.Add(msc);
-            _gm.AddNode(msc);
-
-            var n = _im.RangeSearch(Bcn(msc)).ToList();
-            foreach (var ms in n.Where(ms => ms != msc))
-            {
-                if (Bcn(ms).Contains(new Point { X = msc.Lat, Y = msc.Lon }))
-                {
-                    //Add two edges to simulate a unidirectional graph
-                    _gm.AddEdge(msc, ms);
-                    _gm.AddEdge(ms, msc);
-                }
-            }
+            SimulateOtherUsers(msc); //Only for the purpose of this prototype
+            var n = AddMessage(msc);
 
             var gmMark = _gm.SubGraph(n);
             var m = LocalKSearch(msc.K, msc, gmMark).ToList();
@@ -44,6 +32,26 @@ namespace LocationServiceEndpoint.Anonymizer
                 LonMin = bbox.MinY,
                 LonMax = bbox.MaxY
             };
+        }
+
+        private IEnumerable<OriginalLocation> AddMessage(OriginalLocation msc)
+        {
+            _im.Add(msc);
+            _hm.Add(msc);
+            _gm.AddNode(msc);
+
+            var n = _im.RangeSearch(Bcn(msc)).ToList();
+            foreach (var ms in n.Where(ms => ms != msc))
+            {
+                if (Bcn(ms).Contains(new Point { X = msc.Lat, Y = msc.Lon }))
+                {
+                    //Add two edges to simulate a unidirectional graph
+                    _gm.AddEdge(msc, ms);
+                    _gm.AddEdge(ms, msc);
+                }
+            }
+
+            return n;
         }
 
         private static BoundingBox Bcn(OriginalLocation m)
@@ -92,6 +100,28 @@ namespace LocationServiceEndpoint.Anonymizer
             }
 
             return gmMark.FindClique(msc, k);
+        }
+
+        //On a real anonymization server, this method would obviously not exist
+        private void SimulateOtherUsers(OriginalLocation msc)
+        {
+            var rng = new Random();
+
+            for (var i = 0; i < rng.Next(10, 21); i++)
+            {
+                var location = new OriginalLocation
+                {
+                    Lat = msc.Lat + (rng.NextDouble() - 0.5) * msc.Dx * 2,
+                    Lon = msc.Lon + (rng.NextDouble() - 0.5) * msc.Dy * 2,
+                    K = msc.K - 1,
+                    Dx = msc.Dx * 1.2,
+                    Dy = msc.Dy * 1.2,
+                    Timestamp = 1000,
+                    Id = $"{i}"
+                };
+
+                AddMessage(location);
+            }
         }
     }
 }
