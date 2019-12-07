@@ -6,13 +6,13 @@ namespace LocationServiceEndpoint.Anonymizer
 {
     public class Anonymizer
     {
-        private readonly MultidimensionalIndex _im = new MultidimensionalIndex();
-        private readonly ExpirationHeap _hm = new ExpirationHeap();
-        private readonly ConstraintGraph _gm = new ConstraintGraph();
+        private MultidimensionalIndex _im = new MultidimensionalIndex();
+        private ExpirationHeap _hm = new ExpirationHeap();
+        private ConstraintGraph _gm = new ConstraintGraph();
 
         public AnonymizedLocation Anonymize(OriginalLocation msc)
         {
-            SimulateOtherUsers(msc); //Only for the purpose of this prototype
+            SimulateOtherUsers(msc); //Only for the purpose of this prototype. Remove for video
             var n = AddMessage(msc);
 
             var gmMark = _gm.SubGraph(n);
@@ -24,6 +24,12 @@ namespace LocationServiceEndpoint.Anonymizer
             _hm.Remove(msc);
             _gm.RemoveNode(msc);
             var bbox = Mbr(m);
+
+            //TODO: Remove for video
+            _im = new MultidimensionalIndex();
+            _hm = new ExpirationHeap();
+            _gm = new ConstraintGraph();
+
             return new AnonymizedLocation
             {
                 Id = msc.Id,
@@ -34,7 +40,7 @@ namespace LocationServiceEndpoint.Anonymizer
             };
         }
 
-        private IEnumerable<OriginalLocation> AddMessage(OriginalLocation msc)
+        public IEnumerable<OriginalLocation> AddMessage(OriginalLocation msc)
         {
             _im.Add(msc);
             _hm.Add(msc);
@@ -70,10 +76,10 @@ namespace LocationServiceEndpoint.Anonymizer
             var first = messages.First();
             var result = new BoundingBox
             {
-                MinX = first.Lat,
-                MaxX = first.Lat,
-                MinY = first.Lon,
-                MaxY = first.Lon
+                MinX = 1000,
+                MaxX = -1000,
+                MinY = 1000,
+                MaxY = -1000
             };
 
             foreach (var ms in messages)
